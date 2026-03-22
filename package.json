@@ -1,0 +1,31 @@
+{
+  "name": "Neighbine",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "start": "neu run",
+    "dev:watch": "webpack --mode development --watch",
+    "build:web": "webpack --mode production",
+    "build:exe": "neu build",
+    "build": "pnpm run build:web && pnpm run build:exe"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "packageManager": "pnpm@10.28.2",
+  "dependencies": {
+    "@neutralinojs/lib": "^6.5.0",
+    "howler": "^2.2.4",
+    "pixi.js": "^8.17.1"
+  },
+  "devDependencies": {
+    "@neutralinojs/neu": "^11.7.0",
+    "@types/howler": "^2.2.12",
+    "copy-webpack-plugin": "^14.0.0",
+    "ts-loader": "^9.5.4",
+    "typescript": "^5.9.3",
+    "webpack": "^5.105.4",
+    "webpack-cli": "^7.0.2"
+  }
+}
