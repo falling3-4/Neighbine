@@ -15,8 +15,10 @@
   "license": "ISC",
   "packageManager": "pnpm@10.28.2",
   "dependencies": {
+    "@dimforge/rapier2d": "^0.19.3",
     "@neutralinojs/lib": "^6.5.0",
     "howler": "^2.2.4",
+    "pixi-viewport": "^6.0.3",
     "pixi.js": "^8.17.1"
   },
   "devDependencies": {
