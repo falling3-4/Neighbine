@@ -1,5 +1,16 @@
 const path = require("path");
 const CopyPlugin = require("copy-webpack-plugin");
+const webpack = require("webpack");
+
+function daysSince(startDate) {
+  const start = new Date(startDate);
+  const now = new Date();
+
+  const msPerDay = 1000 * 60 * 60 * 24;
+  return Math.floor((now - start) / msPerDay);
+}
+
+const version = daysSince("2025-12-19");
 
 module.exports = {
   entry: "./src/index.ts",
@@ -27,6 +38,9 @@ module.exports = {
         { from: "resources/js/neutralino.js", to: "neutralino.js" },
         { from: "resources/sounds", to: "sounds" },
       ],
+    }),
+    new webpack.DefinePlugin({
+      __VERSION__: JSON.stringify(version),
     }),
   ],
 };
