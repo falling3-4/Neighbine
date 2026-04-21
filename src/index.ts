@@ -15,4 +15,6 @@ async function initGame() {
   await manager.changeScene(new TestScene(app));
 }
 
+(window as any).debug = true;
+
 initGame();

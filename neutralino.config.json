@@ -17,8 +17,8 @@
   "modes": {
     "window": {
       "title": "Neighbine",
-      "width": 900,
-      "height": 500,
+      "width": 1280,
+      "height": 720,
       "minWidth": 900,
       "minHeight": 500,
       "center": true,

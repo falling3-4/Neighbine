@@ -8,7 +8,7 @@ export class TestScene extends Scene {
   };
 
   private elvisVideo!: VideoManager;
-  private velocity = { x: 4, y: 4 };
+  private velocity = { x: 12, y: 8 };
 
   constructor(app: PIXI.Application) {
     super(app);
@@ -18,7 +18,7 @@ export class TestScene extends Scene {
     this.elvisVideo = new VideoManager("dabigpres", true, 0.5);
 
     this.elvisVideo.sprite.anchor.set(0.5);
-    this.elvisVideo.sprite.scale.set(0.25);
+    this.elvisVideo.sprite.scale.set(0.5);
     this.elvisVideo.sprite.x = this.app.screen.width / 2;
     this.elvisVideo.sprite.y = this.app.screen.height / 2;
 

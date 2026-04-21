@@ -1,6 +1,7 @@
 resources/js
 dist
 bin
+build
 .tmp
 node_modules
 neutralinojs.log

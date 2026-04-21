@@ -25,7 +25,21 @@ export abstract class Scene {
     this.app.stage.addChild(this.viewport);
     this.soundManager = new SoundManager(app, this.viewport);
 
-    this.renderCallback = (delta) => this.onRender(delta.deltaTime ?? delta);
+    const fpsText = new PIXI.Text("FPS: 0", {
+      fontSize: 26,
+      fill: 0xffffff,
+    });
+    fpsText.x = 10;
+    fpsText.y = 10;
+    fpsText.zIndex = 1000;
+    fpsText.visible = debug;
+    this.app.stage.addChild(fpsText);
+
+    this.renderCallback = (delta) => {
+      this.onRender(delta.deltaTime ?? delta);
+      fpsText.text = `FPS: ${Math.round(this.app.ticker.FPS)}`;
+      fpsText.visible = debug;
+    };
     this.app.ticker.add(this.renderCallback);
   }
 

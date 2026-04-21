@@ -4,10 +4,10 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "start": "cross-env NODE_ENV=development neu run",
+    "start": "neu run",
     "dev:watch": "webpack --mode development --watch",
     "build:web": "webpack --mode production",
-    "build:exe": "neu build",
+    "build:exe": "neu build && node move-build.js",
     "build": "pnpm run build:web && pnpm run build:exe"
   },
   "keywords": [],

@@ -22,6 +22,13 @@ export class AssetManager {
       if (!this.loadedAssets.has(alias)) {
         if (this.isAudio(src)) {
           soundPromises.push(this.preloadSound(alias, src));
+        } else if (src.endsWith(".mp4")) {
+          PIXI.Assets.add({
+            alias,
+            src,
+            loadParser: "loadVideo",
+          });
+          pixiTasks.push({ alias, src });
         } else {
           PIXI.Assets.add({ alias, src });
           pixiTasks.push({ alias, src });
@@ -30,12 +37,14 @@ export class AssetManager {
     }
 
     const pixiAliases = pixiTasks.map((t) => t.alias);
+
     const pixiPromise =
       pixiAliases.length > 0
         ? PIXI.Assets.load(pixiAliases)
         : Promise.resolve();
 
     await Promise.all([pixiPromise, ...soundPromises]);
+
     pixiAliases.forEach((a) => this.loadedAssets.add(a));
   }
 
