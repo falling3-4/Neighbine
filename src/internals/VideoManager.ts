@@ -1,16 +1,18 @@
 import * as PIXI from "pixi.js";
-import { SoundPositional, VideoSound2D } from "./Sound";
+import { ISound, SoundPositional, VideoSound2D } from "./Sound";
 
 export class VideoManager {
   public sprite: PIXI.Sprite;
   public videoElement: HTMLVideoElement;
-  public audio: SoundPositional;
+  public audio: ISound;
   private videoSound: VideoSound2D;
 
   constructor(
     textureAlias: string,
     loop: boolean = true,
     volume: number = 1.0,
+    positional: boolean = true,
+    maxDistance: number = 500,
   ) {
     this.sprite = PIXI.Sprite.from(textureAlias);
 
@@ -26,11 +28,16 @@ export class VideoManager {
 
     this.videoSound = new VideoSound2D(this.videoElement, volume);
 
-    this.audio = new SoundPositional(
-      this.videoSound,
-      this.sprite.position,
-      volume,
-    );
+    if (positional) {
+      this.audio = new SoundPositional(
+        this.videoSound,
+        this.sprite.position,
+        volume,
+        maxDistance,
+      );
+    } else {
+      this.audio = this.videoSound;
+    }
 
     const unlock = () => {
       this.videoSound.unlock();

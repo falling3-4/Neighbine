@@ -2,12 +2,13 @@ import * as PIXI from "pixi.js";
 import { SoundManager } from "../internals/Sound";
 import { Viewport } from "pixi-viewport";
 import { AssetManager } from "../internals/AssetManager";
+import { GameObject } from "../internals/GameObject";
 
 export abstract class Scene {
-  app: PIXI.Application;
-  viewport: Viewport;
-  soundManager: SoundManager;
-  graphics: PIXI.Graphics[] = [];
+  public app: PIXI.Application;
+  public viewport: Viewport;
+  public soundManager: SoundManager;
+  private gameObjects: GameObject[] = [];
   private renderCallback: (delta: any) => void;
 
   public abstract readonly assetManifest: Record<string, string>;
@@ -32,38 +33,58 @@ export abstract class Scene {
     fpsText.x = 10;
     fpsText.y = 10;
     fpsText.zIndex = 1000;
-    fpsText.visible = debug;
+    fpsText.visible = (window as any).debug;
     this.app.stage.addChild(fpsText);
 
     this.renderCallback = (delta) => {
-      this.onRender(delta.deltaTime ?? delta);
+      const dt = delta.deltaTime ?? delta;
+      this.update(dt);
       fpsText.text = `FPS: ${Math.round(this.app.ticker.FPS)}`;
-      fpsText.visible = debug;
+      fpsText.visible = (window as any).debug;
     };
     this.app.ticker.add(this.renderCallback);
   }
 
-  addGraphic(graphic: PIXI.Graphics) {
-    this.graphics.push(graphic);
-    this.viewport.addChild(graphic);
+  public addGameObject<T extends GameObject>(gameObject: T): T {
+    this.gameObjects.push(gameObject);
+    return gameObject;
   }
 
-  async _internalLoad(): Promise<void> {
+  public removeGameObject(gameObject: GameObject): void {
+    const index = this.gameObjects.indexOf(gameObject);
+    if (index !== -1) {
+      this.gameObjects.splice(index, 1);
+    }
+  }
+
+  public async _internalLoad(): Promise<void> {
     await AssetManager.sync(this.assetManifest);
-    await this.load();
+    await this.init();
   }
 
-  protected onRender(_dt: number) {}
+  private update(dt: number): void {
+    for (let i = this.gameObjects.length - 1; i >= 0; i--) {
+      const go = this.gameObjects[i];
+      if (!go.isDestroyed) {
+        go.onUpdate(dt);
+      }
+    }
+    this.onUpdate(dt);
+  }
 
-  protected async load(): Promise<void> {}
+  protected async init(): Promise<void> {}
 
-  destroy() {
+  protected onUpdate(_dt: number): void {}
+
+  public destroy(): void {
     this.app.ticker.remove(this.renderCallback);
+    
+    for (const go of [...this.gameObjects]) {
+      go.destroy();
+    }
+    
     this.soundManager.destroy();
     this.viewport.destroy({ children: true });
-
-    this.graphics.length = 0;
-
     AssetManager.unloadAll();
   }
 }

@@ -2,13 +2,16 @@ import { Application } from "pixi.js";
 import { Viewport } from "pixi-viewport";
 import { Howl, Howler } from "howler";
 
-export interface ISound2D {
+export interface ISound {
   play(): void;
   pause(): void;
   stop(): void;
+  destroy(): void;
+}
+
+export interface ISound2D extends ISound {
   setVolume(volume: number): void;
   setPan(pan: number): void;
-  destroy(): void;
 }
 
 export class Sound2D implements ISound2D {
@@ -57,6 +60,7 @@ export class VideoSound2D implements ISound2D {
   private sourceNode: MediaElementAudioSourceNode;
   private gainNode: GainNode;
   private pannerNode: StereoPannerNode;
+  private isUnlocked: boolean = false;
 
   constructor(
     videoElement: HTMLVideoElement,
@@ -95,11 +99,14 @@ export class VideoSound2D implements ISound2D {
   }
 
   play() {
-    this.videoElement.muted = true;
+    if (!this.isUnlocked) {
+      this.videoElement.muted = true;
+    }
     this.videoElement.play();
   }
 
   unlock() {
+    this.isUnlocked = true;
     const ctx = Howler.ctx as AudioContext;
 
     if (ctx.state === "suspended") {
@@ -133,7 +140,7 @@ export class VideoSound2D implements ISound2D {
     this.pannerNode.disconnect();
   }
 }
-export class SoundPositional {
+export class SoundPositional implements ISound {
   private sound: ISound2D;
   public position: { x: number; y: number };
   public maxDistance: number = 500;
@@ -144,9 +151,11 @@ export class SoundPositional {
     soundOrSrc: ISound2D | string | string[] | Howl,
     position: { x: number; y: number },
     volume: number = 1.0,
+    maxDistance: number = 500,
   ) {
     this.position = position;
     this.baseVolume = Math.max(0, volume);
+    this.maxDistance = maxDistance;
 
     if (
       typeof soundOrSrc === "string" ||

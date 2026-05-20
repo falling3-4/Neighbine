@@ -37,14 +37,9 @@ export class AssetManager {
     }
 
     const pixiAliases = pixiTasks.map((t) => t.alias);
-
-    const pixiPromise =
-      pixiAliases.length > 0
-        ? PIXI.Assets.load(pixiAliases)
-        : Promise.resolve();
+    const pixiPromise = pixiAliases.length > 0 ? PIXI.Assets.load(pixiAliases) : Promise.resolve();
 
     await Promise.all([pixiPromise, ...soundPromises]);
-
     pixiAliases.forEach((a) => this.loadedAssets.add(a));
   }
 
@@ -66,6 +61,10 @@ export class AssetManager {
         },
       });
     });
+  }
+
+  static getSound(alias: string): Howl | undefined {
+    return this.soundCache.get(alias);
   }
 
   static async unload(alias: string): Promise<void> {

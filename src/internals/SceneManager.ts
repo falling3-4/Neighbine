@@ -9,21 +9,17 @@ export class SceneManager {
     this.app = app;
   }
 
-  async changeScene(nextScene: Scene) {
+  public async changeScene(nextScene: Scene): Promise<void> {
     if (this.currentScene) {
-      this.app.stage.removeChildren();
       this.currentScene.destroy();
-      this.currentScene = null;
+      this.app.stage.removeChildren();
     }
 
-    if (typeof (nextScene as any)._internalLoad == "function") {
-      await (nextScene as any)._internalLoad();
-    }
-
+    await nextScene._internalLoad();
     this.currentScene = nextScene;
   }
 
-  get activeScene(): Scene | null {
+  public get activeScene(): Scene | null {
     return this.currentScene;
   }
 }
