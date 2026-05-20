@@ -6,6 +6,16 @@ export class AssetManager {
   private static soundCache: Map<string, Howl> = new Map();
   private static readonly audioExtensions = [".mp3", ".ogg", ".wav"];
 
+  private static isAudio(src: string): boolean {
+    const url = src.split("?")[0].split("#")[0];
+    return this.audioExtensions.some((ext) => url.toLowerCase().endsWith(ext));
+  }
+
+  private static isVideo(src: string): boolean {
+    const url = src.split("?")[0].split("#")[0];
+    return url.toLowerCase().endsWith(".mp4");
+  }
+
   static async sync(requiredAssets: Record<string, string>): Promise<void> {
     const requiredAliases = Object.keys(requiredAssets);
 
@@ -22,7 +32,7 @@ export class AssetManager {
       if (!this.loadedAssets.has(alias)) {
         if (this.isAudio(src)) {
           soundPromises.push(this.preloadSound(alias, src));
-        } else if (src.endsWith(".mp4")) {
+        } else if (this.isVideo(src)) {
           PIXI.Assets.add({
             alias,
             src,
@@ -37,14 +47,11 @@ export class AssetManager {
     }
 
     const pixiAliases = pixiTasks.map((t) => t.alias);
-    const pixiPromise = pixiAliases.length > 0 ? PIXI.Assets.load(pixiAliases) : Promise.resolve();
+    const pixiPromise =
+      pixiAliases.length > 0 ? PIXI.Assets.load(pixiAliases) : Promise.resolve();
 
     await Promise.all([pixiPromise, ...soundPromises]);
     pixiAliases.forEach((a) => this.loadedAssets.add(a));
-  }
-
-  private static isAudio(src: string): boolean {
-    return this.audioExtensions.some((ext) => src.toLowerCase().endsWith(ext));
   }
 
   private static preloadSound(alias: string, src: string): Promise<void> {

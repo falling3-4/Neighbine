@@ -17,6 +17,7 @@ export class SceneManager {
 
     await nextScene._internalLoad();
     this.currentScene = nextScene;
+    this.app.stage.sortableChildren = true;
   }
 
   public get activeScene(): Scene | null {

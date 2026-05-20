@@ -7,6 +7,7 @@ import { GameObject } from "../internals/GameObject";
 export abstract class Scene {
   public app: PIXI.Application;
   public viewport: Viewport;
+  public uiContainer: PIXI.Container;
   public soundManager: SoundManager;
   private gameObjects: GameObject[] = [];
   private renderCallback: (delta: any) => void;
@@ -23,7 +24,10 @@ export abstract class Scene {
       events: app.renderer.events,
     });
 
+    this.uiContainer = new PIXI.Container();
+
     this.app.stage.addChild(this.viewport);
+    this.app.stage.addChild(this.uiContainer);
     this.soundManager = new SoundManager(app, this.viewport);
 
     const fpsText = new PIXI.Text("FPS: 0", {
@@ -85,6 +89,7 @@ export abstract class Scene {
     
     this.soundManager.destroy();
     this.viewport.destroy({ children: true });
+    this.uiContainer.destroy({ children: true });
     AssetManager.unloadAll();
   }
 }

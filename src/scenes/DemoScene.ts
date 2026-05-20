@@ -6,13 +6,13 @@ import { KeyboardControllerComponent } from "../components/KeyboardControllerCom
 import { RotationComponent } from "../components/RotationComponent";
 import { TextComponent } from "../components/TextComponent";
 import { ClickableComponent } from "../components/ClickableComponent";
-import { FollowTargetComponent } from "../components/FollowTargetComponent";
 import { CameraFollowComponent } from "../components/CameraFollowComponent";
-import { AudioComponent } from "../components/AudioComponent";
+import { VideoPlayerComponent } from "../components/VideoPlayerComponent";
 
 export class DemoScene extends Scene {
   public assetManifest: Record<string, string> = {
     playerTexture: "textures/dabigpres.jpg",
+    video: "https://pixijs.com/assets/video.mp4",
     testSound: "sounds/test.ogg",
   };
 
@@ -29,20 +29,19 @@ export class DemoScene extends Scene {
     player.container.x = this.app.screen.width / 2;
     player.container.y = this.app.screen.height / 2;
     player.container.scale.set(0.1);
+    player.container.zIndex = 9999;
     this.addGameObject(player);
 
-    const soundEmitter = new GameObject(this);
-    soundEmitter.addComponent(new SpriteComponent("playerTexture"));
-    soundEmitter.addComponent(
-      new AudioComponent("testSound", true, 0.5, true, true, 1000),
+    const videoPlayer = new GameObject(this);
+    videoPlayer.addComponent(
+      new VideoPlayerComponent("video", true, 0.5, true, 1000),
     );
-    soundEmitter.container.x = this.app.screen.width / 2 + 200;
-    soundEmitter.container.y = this.app.screen.height / 2;
-    soundEmitter.container.scale.set(0.05);
-    soundEmitter.container.tint = 0xff0000;
-    this.addGameObject(soundEmitter);
+    videoPlayer.container.x = this.app.screen.width / 2;
+    videoPlayer.container.y = this.app.screen.height / 2;
+    videoPlayer.container.scale.set(2);
+    this.addGameObject(videoPlayer);
 
-    const uiText = new GameObject(this);
+    const uiText = new GameObject(this, false);
     const textComp = uiText.addComponent(
       new TextComponent("Click me!", {
         fill: 0xffffff,
@@ -59,5 +58,12 @@ export class DemoScene extends Scene {
     uiText.container.x = 100;
     uiText.container.y = 100;
     this.addGameObject(uiText);
+
+    const hudElement = new GameObject(this, true);
+    hudElement.addComponent(
+      new TextComponent("HUD Text", { fill: 0xffff00, fontSize: 50 }),
+    );
+    hudElement.container.position.set(100, 60);
+    this.addGameObject(hudElement);
   }
 }

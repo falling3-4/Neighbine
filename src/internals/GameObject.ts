@@ -8,10 +8,14 @@ export class GameObject {
   public isDestroyed: boolean = false;
   private components: Component[] = [];
 
-  constructor(scene: Scene) {
+  constructor(scene: Scene, isUI: boolean = false) {
     this.scene = scene;
     this.container = new PIXI.Container();
-    this.scene.viewport.addChild(this.container);
+    if (isUI) {
+      this.scene.uiContainer.addChild(this.container);
+    } else {
+      this.scene.viewport.addChild(this.container);
+    }
   }
 
   public addComponent<T extends Component>(component: T): T {

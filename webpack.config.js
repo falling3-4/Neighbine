@@ -16,6 +16,7 @@ function formatDate(startDate) {
 }
 
 const version = formatDate("2025-12-19T17:19:00");
+const isNeutralino = process.env.IS_NEUTRALINO === "true";
 
 module.exports = {
   entry: "./src/index.ts",
@@ -39,14 +40,28 @@ module.exports = {
   plugins: [
     new CopyPlugin({
       patterns: [
-        { from: "src/index.html", to: "index.html" },
-        { from: "resources/js/neutralino.js", to: "neutralino.js" },
+        {
+          from: "src/index.html",
+          to: "index.html",
+          transform(content) {
+            if (!isNeutralino) {
+              return content
+                .toString()
+                .replace('<script src="neutralino.js"></script>', "");
+            }
+            return content;
+          },
+        },
+        ...(isNeutralino
+          ? [{ from: "resources/js/neutralino.js", to: "neutralino.js" }]
+          : []),
         { from: "resources/sounds", to: "sounds" },
         { from: "resources/textures", to: "textures" },
       ],
     }),
     new webpack.DefinePlugin({
       __VERSION__: JSON.stringify(version),
+      __IS_NEUTRALINO__: JSON.stringify(isNeutralino),
     }),
   ],
 };

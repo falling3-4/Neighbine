@@ -6,11 +6,15 @@ export interface ISound {
   play(): void;
   pause(): void;
   stop(): void;
+  setVolume(volume: number): void;
+  seek(time: number): void;
+  currentTime(): number;
+  duration(): number;
+  isPlaying(): boolean;
   destroy(): void;
 }
 
 export interface ISound2D extends ISound {
-  setVolume(volume: number): void;
   setPan(pan: number): void;
 }
 
@@ -46,6 +50,18 @@ export class Sound2D implements ISound2D {
   }
   setVolume(volume: number) {
     this.howl.volume(volume);
+  }
+  seek(time: number) {
+    this.howl.seek(time);
+  }
+  currentTime(): number {
+    return this.howl.seek() as number;
+  }
+  duration(): number {
+    return this.howl.duration();
+  }
+  isPlaying(): boolean {
+    return this.howl.playing();
   }
   setPan(pan: number) {
     this.howl.stereo(pan);
@@ -130,6 +146,22 @@ export class VideoSound2D implements ISound2D {
     this.gainNode.gain.value = volume;
   }
 
+  seek(time: number) {
+    this.videoElement.currentTime = time;
+  }
+
+  currentTime(): number {
+    return this.videoElement.currentTime;
+  }
+
+  duration(): number {
+    return this.videoElement.duration;
+  }
+
+  isPlaying(): boolean {
+    return !this.videoElement.paused;
+  }
+
   setPan(pan: number) {
     this.pannerNode.pan.value = pan;
   }
@@ -205,6 +237,21 @@ export class SoundPositional implements ISound {
   }
   stop() {
     this.sound.stop();
+  }
+  setVolume(volume: number) {
+    this.setBaseVolume(volume);
+  }
+  seek(time: number) {
+    this.sound.seek(time);
+  }
+  currentTime(): number {
+    return this.sound.currentTime();
+  }
+  duration(): number {
+    return this.sound.duration();
+  }
+  isPlaying(): boolean {
+    return this.sound.isPlaying();
   }
 
   destroy() {

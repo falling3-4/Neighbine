@@ -13,8 +13,10 @@ export class VideoManager {
     volume: number = 1.0,
     positional: boolean = true,
     maxDistance: number = 500,
+    position?: { x: number; y: number },
   ) {
     this.sprite = PIXI.Sprite.from(textureAlias);
+    this.sprite.anchor.set(0.5);
 
     this.videoElement = (
       this.sprite.texture.source as PIXI.VideoSource
@@ -31,7 +33,7 @@ export class VideoManager {
     if (positional) {
       this.audio = new SoundPositional(
         this.videoSound,
-        this.sprite.position,
+        position || this.sprite.position,
         volume,
         maxDistance,
       );
@@ -59,6 +61,34 @@ export class VideoManager {
 
   stop() {
     this.audio.stop();
+  }
+
+  togglePlay() {
+    if (this.isPlaying()) {
+      this.pause();
+    } else {
+      this.play();
+    }
+  }
+
+  seek(time: number) {
+    this.audio.seek(time);
+  }
+
+  setVolume(volume: number) {
+    this.audio.setVolume(volume);
+  }
+
+  currentTime(): number {
+    return this.audio.currentTime();
+  }
+
+  duration(): number {
+    return this.audio.duration();
+  }
+
+  isPlaying(): boolean {
+    return this.audio.isPlaying();
   }
 
   destroy() {

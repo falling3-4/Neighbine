@@ -35,7 +35,6 @@ export class AudioComponent extends Component {
       return;
     }
 
-    // Configure the howl object
     howl.loop(this.loop);
     howl.volume(this.volume);
 
@@ -65,6 +64,34 @@ export class AudioComponent extends Component {
 
   public stop(): void {
     this.sound?.stop();
+  }
+
+  public togglePlay(): void {
+    if (this.isPlaying()) {
+      this.pause();
+    } else {
+      this.play();
+    }
+  }
+
+  public seek(time: number): void {
+    this.sound?.seek(time);
+  }
+
+  public setVolume(volume: number): void {
+    this.sound?.setVolume(volume);
+  }
+
+  public currentTime(): number {
+    return this.sound?.currentTime() || 0;
+  }
+
+  public duration(): number {
+    return this.sound?.duration() || 0;
+  }
+
+  public isPlaying(): boolean {
+    return this.sound?.isPlaying() || false;
   }
 
   public onUpdate(_dt: number): void {}

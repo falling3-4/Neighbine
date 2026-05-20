@@ -4,7 +4,9 @@ import { initialize } from "./internals/Initialize";
 import { SceneManager } from "./internals/SceneManager";
 import { DemoScene } from "./scenes/DemoScene";
 
-Neutralino.init();
+if (__IS_NEUTRALINO__) {
+  Neutralino.init();
+}
 
 async function initGame() {
   const app = await initialize();
